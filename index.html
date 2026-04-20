@@ -1040,8 +1040,6 @@ function getFiltered() {
 
 function renderStats() {
   document.getElementById('stat-works').textContent = WORKS.length;
-  const totalVotes = Object.values(voteCounts).reduce((s, v) => s + v, 0);
-  document.getElementById('stat-votes').textContent = totalVotes;
   const authors = new Set(WORKS.map(w => w.author));
   document.getElementById('stat-authors').textContent = authors.size;
 }
