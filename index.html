@@ -805,10 +805,6 @@
       <span class="stat-label">Работ</span>
     </div>
     <div class="stat">
-      <span class="stat-number" id="stat-votes">0</span>
-      <span class="stat-label">Голосов</span>
-    </div>
-    <div class="stat">
       <span class="stat-number" id="stat-authors">0</span>
       <span class="stat-label">Участников</span>
     </div>
@@ -861,7 +857,7 @@
 </div>
 
 <footer>
-  TARS × AI CONTEST · Голосование открыто для всех участников чата
+  TARS × AI CONTEST · Голосование проводится в чате TARS · Все вопросы к администрации
 </footer>
 
 <!-- MODAL -->
@@ -880,15 +876,15 @@
       <div id="m-gallery" style="display:none;margin-bottom:16px;"></div>
       <div class="modal-links" id="m-links"></div>
       <div class="modal-vote-section">
-        <div>
-          <div class="modal-vote-label">Голосов</div>
-          <div class="modal-vote-count">
-            <span id="m-votes">0</span>
-            <sub>голосов</sub>
+        <div style="flex:1;">
+          <div class="modal-vote-label" style="margin-bottom:6px;">Голосование</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.6;">
+            Голосование будет проводиться в чате <span style="color:var(--accent3);">TARS</span>.<br>
+            Все вопросы к администрации чата.
           </div>
         </div>
-        <button class="btn-modal-vote" id="m-vote-btn" onclick="voteFromModal()">
-          ♥ ГОЛОСОВАТЬ
+        <button class="btn-modal-vote" id="m-vote-btn" onclick="showVotingNotice()">
+          ⏳ СКОРО
         </button>
       </div>
     </div>
@@ -1082,13 +1078,7 @@ function renderGrid() {
         <div class="card-desc">${w.desc}</div>
         <div class="card-footer">
           <button class="btn-view" onclick="openModal(${w.id})">→ Смотреть</button>
-          <div class="vote-area">
-            <button class="btn-vote ${isVoted ? 'voted' : ''}"
-              onclick="vote(${w.id})"
-              ${isVoted ? 'title="Вы уже проголосовали"' : 'title="Голосовать"'}
-            >♥</button>
-            <span class="vote-count" id="vc-${w.id}">${count}</span>
-          </div>
+          <button class="btn-vote" onclick="showVotingNotice()" title="Голосование в чате TARS">⏳</button>
         </div>
       </div>`;
     grid.appendChild(card);
@@ -1096,31 +1086,26 @@ function renderGrid() {
 }
 
 function vote(id) {
-  if (votes[id]) { showToast('Вы уже голосовали за эту работу'); return; }
-  votes[id] = true;
-  voteCounts[id] = (voteCounts[id] || 0) + 1;
-  localStorage.setItem('tars_votes', JSON.stringify(votes));
-  saveVoteCounts();
-  renderGrid();
-  renderStats();
-  if (currentModalId === id) updateModalVote(id);
-  showToast('✦ Голос засчитан!');
+  showVotingNotice();
 }
 
 function voteFromModal() {
-  if (currentModalId) vote(currentModalId);
+  showVotingNotice();
+}
+
+function showVotingNotice() {
+  showToast('⏳ Голосование будет в чате TARS — все вопросы к администрации');
 }
 
 function updateModalVote(id) {
-  const isVoted = !!votes[id];
   const btn = document.getElementById('m-vote-btn');
-  const countEl = document.getElementById('m-votes');
   if (btn) {
-    btn.textContent = isVoted ? '✓ ГОЛОС ЗАСЧИТАН' : '♥ ГОЛОСОВАТЬ';
-    btn.className = 'btn-modal-vote' + (isVoted ? ' voted' : '');
-    btn.disabled = isVoted;
+    btn.textContent = '⏳ ГОЛОСОВАНИЕ В ЧАТЕ TARS';
+    btn.className = 'btn-modal-vote';
+    btn.disabled = false;
   }
-  if (countEl) countEl.textContent = voteCounts[id] || 0;
+  const countEl = document.getElementById('m-votes');
+  if (countEl) countEl.textContent = '—';
 }
 
 function openModal(id) {
@@ -1247,13 +1232,7 @@ function openAuthor(author) {
         <div class="card-desc">${w.desc}</div>
         <div class="card-footer">
           <button class="btn-view" onclick="openModal(${w.id})">→ Смотреть</button>
-          <div class="vote-area">
-            <button class="btn-vote ${isVoted ? 'voted' : ''}"
-              onclick="vote(${w.id})"
-              ${isVoted ? 'title="Вы уже проголосовали"' : 'title="Голосовать"'}
-            >♥</button>
-            <span class="vote-count" id="vc2-${w.id}">${count}</span>
-          </div>
+          <button class="btn-vote" onclick="showVotingNotice()" title="Голосование в чате TARS">⏳</button>
         </div>
       </div>`;
     grid.appendChild(card);
