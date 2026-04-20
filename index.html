@@ -828,7 +828,8 @@
     <button class="filter-btn" data-filter="other">Другое</button>
     <select class="sort-select" id="sort-select">
       <option value="default">Порядок: По умолчанию</option>
-      <option value="votes">Порядок: По голосам</option>
+      <option value="author">Порядок: По автору (А→Я)</option>
+      <option value="title">Порядок: По названию (А→Я)</option>
     </select>
   </div>
   <main>
@@ -1032,16 +1033,22 @@ function getFiltered() {
     ? [...WORKS]
     : WORKS.filter(w => w.category === currentFilter);
 
-  if (currentSort === 'votes') {
-    list.sort((a, b) => (voteCounts[b.id] || 0) - (voteCounts[a.id] || 0));
+  if (currentSort === 'author') {
+    list.sort((a, b) => a.author.localeCompare(b.author, 'ru'));
+  } else if (currentSort === 'title') {
+    list.sort((a, b) => a.title.localeCompare(b.title, 'ru'));
   }
   return list;
 }
 
 function renderStats() {
-  document.getElementById('stat-works').textContent = WORKS.length;
-  const authors = new Set(WORKS.map(w => w.author));
-  document.getElementById('stat-authors').textContent = authors.size;
+  const worksEl = document.getElementById('stat-works');
+  const authorsEl = document.getElementById('stat-authors');
+  if (worksEl) worksEl.textContent = WORKS.length;
+  if (authorsEl) {
+    const authors = new Set(WORKS.map(w => w.author));
+    authorsEl.textContent = authors.size;
+  }
 }
 
 function renderGrid() {
@@ -1270,8 +1277,10 @@ document.getElementById('modal-overlay').addEventListener('click', e => {
 });
 
 // Init
-renderStats();
-renderGrid();
+document.addEventListener('DOMContentLoaded', () => {
+  renderStats();
+  renderGrid();
+});
 </script>
 </body>
 </html>
