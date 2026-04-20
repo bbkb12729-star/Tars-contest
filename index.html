@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TARS × AI — Конкурс работ</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Unbounded:wght@300;600;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #2a2a3a;
+    --accent: #7b5ea7;
+    --accent2: #e05a8a;
+    --accent3: #3ecfcf;
+    --text: #e8e8f0;
+    --muted: #7070a0;
+    --voted: #3ecfcf;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND GRID ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(123,94,167,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(123,94,167,0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 60px 40px 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(123,94,167,0.08) 0%, transparent 100%);
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent3);
+    border: 1px solid var(--accent3);
+    padding: 4px 14px;
+    margin-bottom: 24px;
+    animation: pulse-border 2s infinite;
+  }
+
+  @keyframes pulse-border {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(62,207,207,0.3); }
+    50% { box-shadow: 0 0 0 6px rgba(62,207,207,0); }
+  }
+
+  h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: clamp(28px, 6vw, 64px);
+    line-height: 1;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, #fff 30%, var(--accent) 70%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin-bottom: 36px;
+  }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-number {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--accent3);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ── FILTERS ── */
+  .filters {
+    position: relative;
+    z-index: 10;
+    padding: 24px 40px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .filter-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-right: 6px;
+    text-transform: uppercase;
+  }
+
+  .filter-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 6px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--accent);
+    color: var(--text);
+    background: rgba(123,94,167,0.12);
+  }
+
+  .filter-btn.active {
+    color: var(--accent3);
+    border-color: var(--accent3);
+  }
+
+  .sort-select {
+    margin-left: auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 6px 12px;
+    cursor: pointer;
+    outline: none;
+  }
+
+  /* ── GRID ── */
+  main {
+    position: relative;
+    z-index: 10;
+    padding: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    cursor: default;
+    animation: card-in 0.5s both;
+  }
+
+  @keyframes card-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(123,94,167,0.2);
+    border-color: var(--accent);
+  }
+
+  .card-number {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.03);
+    line-height: 1;
+    padding: 4px 12px;
+    pointer-events: none;
+  }
+
+  .card-preview {
+    width: 100%;
+    height: 160px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-preview::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(123,94,167,0.1), transparent);
+  }
+
+  .card-tag {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    margin: 16px 16px 0;
+    border: 1px solid;
+  }
+
+  .tag-app    { color: #3ecfcf; border-color: rgba(62,207,207,0.4); }
+  .tag-game   { color: #e05a8a; border-color: rgba(224,90,138,0.4); }
+  .tag-tool   { color: #f0c040; border-color: rgba(240,192,64,0.4); }
+  .tag-art    { color: #7b5ea7; border-color: rgba(123,94,167,0.6); }
+  .tag-other  { color: var(--muted); border-color: var(--border); }
+
+  .card-body {
+    padding: 12px 16px 16px;
+  }
+
+  .card-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .card-author {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  .card-author span {
+    color: var(--accent3);
+  }
+
+  .card-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 16px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ── CARD FOOTER ── */
+  .card-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn-view {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .btn-view:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .vote-area {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-vote {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .btn-vote:hover:not(:disabled) {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    transform: scale(1.1);
+  }
+
+  .btn-vote.voted {
+    border-color: var(--voted);
+    color: var(--voted);
+    background: rgba(62,207,207,0.1);
+  }
+
+  .btn-vote:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .vote-count {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    min-width: 24px;
+    text-align: center;
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    padding: 20px;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--accent);
+    max-width: 640px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: modal-in 0.25s ease-out;
+  }
+
+  @keyframes modal-in {
+    from { opacity: 0; transform: scale(0.95) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-header {
+    padding: 24px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .modal-icon {
+    font-size: 40px;
+    flex-shrink: 0;
+  }
+
+  .modal-title-group { flex: 1; }
+
+  .modal-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .modal-author {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .modal-author span { color: var(--accent3); }
+
+  .modal-close {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .modal-close:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  .modal-body { padding: 24px; }
+
+  .modal-desc {
+    font-size: 13px;
+    line-height: 1.8;
+    color: #b0b0d0;
+    margin-bottom: 24px;
+  }
+
+  .modal-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .modal-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 1px solid var(--accent3);
+    color: var(--accent3);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .modal-link:hover {
+    background: var(--accent3);
+    color: var(--bg);
+  }
+
+  .modal-link.disabled {
+    border-color: var(--border);
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  .modal-vote-section {
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .modal-vote-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .modal-vote-count {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--accent3);
+  }
+
+  .modal-vote-count sub {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    vertical-align: bottom;
+    padding-bottom: 4px;
+  }
+
+  .btn-modal-vote {
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid var(--accent2);
+    color: var(--accent2);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-modal-vote:hover:not(:disabled) {
+    background: var(--accent2);
+    color: var(--bg);
+  }
+
+  .btn-modal-vote.voted {
+    border-color: var(--voted);
+    color: var(--voted);
+    background: rgba(62,207,207,0.08);
+  }
+
+  .btn-modal-vote:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 16px 32px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: -1px;
+  }
+
+  .tab-btn:hover { color: var(--text); }
+
+  .tab-btn.active {
+    color: var(--accent3);
+    border-bottom-color: var(--accent3);
+  }
+
+  /* ── AUTHORS PAGE ── */
+  #page-authors {
+    display: none;
+    position: relative;
+    z-index: 10;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px;
+  }
+
+  #page-works { display: block; }
+
+  .authors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+
+  .author-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .author-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+
+  .author-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(123,94,167,0.2);
+  }
+
+  .author-card:hover::before { transform: scaleX(1); }
+
+  .author-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 14px;
+    flex-shrink: 0;
+  }
+
+  .author-name {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .author-works-count {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent3);
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+
+  .author-work-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .author-pill {
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
+
+  /* ── AUTHOR DETAIL VIEW ── */
+  #author-detail {
+    display: none;
+  }
+
+  .author-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .author-detail-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .author-detail-info h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .author-detail-info p {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--accent3);
+    text-transform: uppercase;
+  }
+
+  .btn-back {
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .btn-back:hover {
+    border-color: var(--accent3);
+    color: var(--accent3);
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--muted);
+  }
+
+  .empty-icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-text { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 32px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 2px;
+  }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--accent3);
+    color: var(--bg);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 10px 24px;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 200;
+    pointer-events: none;
+  }
+
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    header { padding: 40px 20px 30px; }
+    main, #page-authors { padding: 24px 16px; }
+    .filters { padding: 16px; }
+    .grid { grid-template-columns: 1fr; }
+    .tab-btn { padding: 14px 18px; font-size: 10px; letter-spacing: 2px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">✦ TARS Community</div>
+  <h1>AI CONTEST</h1>
+  <p class="subtitle">РАБОТЫ УЧАСТНИКОВ · ГОЛОСОВАНИЕ · 2025</p>
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="stat-number" id="stat-works">0</span>
+      <span class="stat-label">Работ</span>
+    </div>
+    <div class="stat">
+      <span class="stat-number" id="stat-votes">0</span>
+      <span class="stat-label">Голосов</span>
+    </div>
+    <div class="stat">
+      <span class="stat-number" id="stat-authors">0</span>
+      <span class="stat-label">Участников</span>
+    </div>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('works')">✦ Работы</button>
+  <button class="tab-btn" onclick="switchTab('authors')">◈ Авторы</button>
+</div>
+
+<!-- PAGE: WORKS -->
+<div id="page-works">
+  <div class="filters">
+    <span class="filter-label">Фильтр:</span>
+    <button class="filter-btn active" data-filter="all">Все</button>
+    <button class="filter-btn" data-filter="app">Приложения</button>
+    <button class="filter-btn" data-filter="game">Игры</button>
+    <button class="filter-btn" data-filter="tool">Инструменты</button>
+    <button class="filter-btn" data-filter="art">Арт / Генерация</button>
+    <button class="filter-btn" data-filter="other">Другое</button>
+    <select class="sort-select" id="sort-select">
+      <option value="default">Порядок: По умолчанию</option>
+      <option value="votes">Порядок: По голосам</option>
+    </select>
+  </div>
+  <main>
+    <div class="grid" id="grid"></div>
+  </main>
+</div>
+
+<!-- PAGE: AUTHORS -->
+<div id="page-authors">
+  <!-- Author list -->
+  <div id="authors-list">
+    <div class="authors-grid" id="authors-grid"></div>
+  </div>
+  <!-- Author detail -->
+  <div id="author-detail">
+    <div class="author-detail-header">
+      <div class="author-detail-avatar" id="ad-avatar">?</div>
+      <div class="author-detail-info">
+        <h2 id="ad-name">—</h2>
+        <p id="ad-count">0 работ</p>
+      </div>
+      <button class="btn-back" onclick="showAuthorsList()">← Все авторы</button>
+    </div>
+    <div class="grid" id="author-works-grid"></div>
+  </div>
+</div>
+
+<footer>
+  TARS × AI CONTEST · Голосование открыто для всех участников чата
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-icon" id="m-icon">🤖</div>
+      <div class="modal-title-group">
+        <div class="modal-title" id="m-title">—</div>
+        <div class="modal-author">автор: <span id="m-author">—</span></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc" id="m-desc">—</p>
+      <div id="m-gallery" style="display:none;margin-bottom:16px;"></div>
+      <div class="modal-links" id="m-links"></div>
+      <div class="modal-vote-section">
+        <div>
+          <div class="modal-vote-label">Голосов</div>
+          <div class="modal-vote-count">
+            <span id="m-votes">0</span>
+            <sub>голосов</sub>
+          </div>
+        </div>
+        <button class="btn-modal-vote" id="m-vote-btn" onclick="voteFromModal()">
+          ♥ ГОЛОСОВАТЬ
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────
+//  ДАННЫЕ КОНКУРСА — добавляйте работы сюда!
+// ─────────────────────────────────────────────
+const WORKS = [
+  // Пример записи (закомментирован):
+  // {
+  //   id: 1,
+  //   title: "Название работы",
+  //   author: "Имя автора",
+  //   category: "app",          // app | game | tool | art | other
+  //   icon: "🚀",               // эмодзи-иконка
+  //   desc: "Описание проекта — что делает, как использует AI.",
+  //   link: "https://...",       // ссылка на демо (или null)
+  //   source: null,              // ссылка на исходники (или null)
+  // },
+  {
+    id: 1,
+    title: "Late Night Scroll",
+    author: "Inessa",
+    category: "game",
+    icon: "🌙",
+    desc: "Симулятор нічного скролінгу соцмережі під lo-fi музику. Обирай правильну реакцію на пост — лайк, дизлайк, репост або скіп — і стеж за своїми статами: Сонливість, Брейнрот та Дофамін. 20 постів, глибока ніч, атмосфера 3:47.",
+    link: "https://psittacosinfantem.github.io/minilofigame/",
+    source: null,
+  },
+  {
+    id: 2,
+    title: "Space Run",
+    author: "Taras",
+    category: "game",
+    icon: "🚀",
+    desc: "Космический раннер — уворачивайся от препятствий и лети как можно дальше. Динамичный геймплей, космическая атмосфера, управление одним нажатием.",
+    link: "https://bbkb12729-star.github.io/space-run-game/",
+    source: null,
+  },
+  {
+    id: 3,
+    title: "Котик-Бегун: Погоня за Мемами",
+    author: "Мишка (сын Taras'а)",
+    category: "game",
+    icon: "🐱",
+    desc: "Раннер про котика, который гонится за мемами! Проект юного разработчика — создан с помощью AI. Особый участник конкурса 🌟",
+    link: "https://bbkb12729-star.github.io/Cat-runer/",
+    source: null,
+  },
+  {
+    id: 4,
+    title: "Solar Gravity",
+    author: "Taras",
+    category: "app",
+    icon: "🪐",
+    desc: "Інтерактивна симуляція сонячної системи з дослідженням планет. На смартфоні — торкання пальцями створюють гравітаційні поля в точках дотику. Чудово працює з тачскріном.",
+    link: "https://bbkb12729-star.github.io/Solar-gravity/",
+    source: null,
+  },
+  {
+    id: 5,
+    title: "GIT BLAME",
+    author: "Aramais",
+    category: "game",
+    icon: "🔍",
+    desc: "Детективна гра до 5-річчя команди TARS. Хтось злив репо — знайди винного! Розслідуй справи, допитуй підозрюваних, закривай кейси. Бонус: міні-гра «Козаки: Захист Чату». Будь-який збіг з реальними особами є суто випадковим. Ну майже. Найкраще працює в Chrome.",
+    link: "https://aramaistyshchenko.github.io/git-blame/",
+    source: null,
+  },
+  {
+    id: 6,
+    title: "Chicken Banquet",
+    author: "playguitares",
+    category: "art",
+    icon: "🍗",
+    desc: "AI-генерация: куры за праздничным столом едят... курицу, яйца, наггетсы и яйца Бенедикт. Экзистенциальный ужас в одной картинке. Философия, абсурд и гастрономия в одном флаконе.",
+    link: null,
+    source: null,
+    image: "chicken.jpg",
+  },
+  {
+    id: 7,
+    title: "Тишина, рассказанная по-разному",
+    author: "Ann",
+    category: "art",
+    icon: "🎨",
+    desc: "Оригинал — живопись маслом. С помощью AI та же картина пересказана в 8 художественных стилях: Импасто, Постимпрессионизм (Ван Гог), Реализм (Левитан, Шишкин), Акварель, Барокко (Рембрандт), Японская гравюра (Хокусай), Романтизм (Тёрнер), Модернизм (Сезанн). Один мотив — восемь голосов.",
+    link: null,
+    source: null,
+    image: "ann-original.jpg",
+    gallery: ["ann-original.jpg", "ann-styles-3.jpg", "ann-styles-4.jpg"],
+  },
+  {
+    id: 8,
+    title: "Клипси — AI-помощник для Chrome",
+    author: "Ефим",
+    category: "tool",
+    icon: "📎",
+    desc: "Chrome-расширение вдохновлённое легендарной скрепкой из MS Office — но теперь с настоящим AI (Claude от Anthropic). Умеет: чат с AI, саммари страницы, перевод, проверка текста, простое объяснение темы. Требует API-ключ Claude — платишь не Ефиму, а Anthropic 😄",
+    link: null,
+    source: null,
+  },
+];
+
+// ─────────────────────────────────────────────
+//  ДВИЖОК (не трогать)
+// ─────────────────────────────────────────────
+
+const tagLabels = {
+  app: 'Приложение',
+  game: 'Игра',
+  tool: 'Инструмент',
+  art: 'Арт / AI',
+  other: 'Другое',
+};
+
+let votes = JSON.parse(localStorage.getItem('tars_votes') || '{}');
+let voteCounts = {};
+WORKS.forEach(w => { voteCounts[w.id] = 0; });
+
+// Restore votes counts from persisted data
+try {
+  const saved = JSON.parse(localStorage.getItem('tars_vote_counts') || '{}');
+  WORKS.forEach(w => { voteCounts[w.id] = saved[w.id] || 0; });
+} catch(e) {}
+
+let currentFilter = 'all';
+let currentSort = 'default';
+let currentModalId = null;
+
+function saveVoteCounts() {
+  localStorage.setItem('tars_vote_counts', JSON.stringify(voteCounts));
+}
+
+function getFiltered() {
+  let list = currentFilter === 'all'
+    ? [...WORKS]
+    : WORKS.filter(w => w.category === currentFilter);
+
+  if (currentSort === 'votes') {
+    list.sort((a, b) => (voteCounts[b.id] || 0) - (voteCounts[a.id] || 0));
+  }
+  return list;
+}
+
+function renderStats() {
+  document.getElementById('stat-works').textContent = WORKS.length;
+  const totalVotes = Object.values(voteCounts).reduce((s, v) => s + v, 0);
+  document.getElementById('stat-votes').textContent = totalVotes;
+  const authors = new Set(WORKS.map(w => w.author));
+  document.getElementById('stat-authors').textContent = authors.size;
+}
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  const list = getFiltered();
+  grid.innerHTML = '';
+
+  if (list.length === 0) {
+    grid.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">🛸</div>
+        <div class="empty-text">Работ пока нет. Скоро появятся!</div>
+      </div>`;
+    return;
+  }
+
+  list.forEach((w, idx) => {
+    const isVoted = !!votes[w.id];
+    const count = voteCounts[w.id] || 0;
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.animationDelay = (idx * 0.05) + 's';
+    const previewHTML = w.image
+      ? `<div class="card-preview" style="padding:0;overflow:hidden;"><img src="${w.image}" alt="${w.title}" style="width:100%;height:100%;object-fit:cover;display:block;"></div>`
+      : `<div class="card-preview" style="font-size:56px">${w.icon}</div>`;
+    card.innerHTML = `
+      <div class="card-number">${String(w.id).padStart(2,'0')}</div>
+      ${previewHTML}
+      <span class="card-tag tag-${w.category}">${tagLabels[w.category]}</span>
+      <div class="card-body">
+        <div class="card-title">${w.title}</div>
+        <div class="card-author">автор: <span>${w.author}</span></div>
+        <div class="card-desc">${w.desc}</div>
+        <div class="card-footer">
+          <button class="btn-view" onclick="openModal(${w.id})">→ Смотреть</button>
+          <div class="vote-area">
+            <button class="btn-vote ${isVoted ? 'voted' : ''}"
+              onclick="vote(${w.id})"
+              ${isVoted ? 'title="Вы уже проголосовали"' : 'title="Голосовать"'}
+            >♥</button>
+            <span class="vote-count" id="vc-${w.id}">${count}</span>
+          </div>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function vote(id) {
+  if (votes[id]) { showToast('Вы уже голосовали за эту работу'); return; }
+  votes[id] = true;
+  voteCounts[id] = (voteCounts[id] || 0) + 1;
+  localStorage.setItem('tars_votes', JSON.stringify(votes));
+  saveVoteCounts();
+  renderGrid();
+  renderStats();
+  if (currentModalId === id) updateModalVote(id);
+  showToast('✦ Голос засчитан!');
+}
+
+function voteFromModal() {
+  if (currentModalId) vote(currentModalId);
+}
+
+function updateModalVote(id) {
+  const isVoted = !!votes[id];
+  const btn = document.getElementById('m-vote-btn');
+  const countEl = document.getElementById('m-votes');
+  if (btn) {
+    btn.textContent = isVoted ? '✓ ГОЛОС ЗАСЧИТАН' : '♥ ГОЛОСОВАТЬ';
+    btn.className = 'btn-modal-vote' + (isVoted ? ' voted' : '');
+    btn.disabled = isVoted;
+  }
+  if (countEl) countEl.textContent = voteCounts[id] || 0;
+}
+
+function openModal(id) {
+  const w = WORKS.find(x => x.id === id);
+  if (!w) return;
+  currentModalId = id;
+
+  document.getElementById('m-icon').textContent = w.image ? '' : w.icon;
+  document.getElementById('m-icon').innerHTML = w.image
+    ? `<img src="${w.image}" alt="${w.title}" style="width:80px;height:60px;object-fit:cover;border:1px solid var(--border);">`
+    : w.icon;
+  document.getElementById('m-title').textContent = w.title;
+  document.getElementById('m-author').textContent = w.author;
+  document.getElementById('m-desc').textContent = w.desc;
+
+  // Links
+  const linksEl = document.getElementById('m-links');
+  linksEl.innerHTML = '';
+  if (w.link) {
+    linksEl.innerHTML += `<a class="modal-link" href="${w.link}" target="_blank">↗ ОТКРЫТЬ ДЕМО</a>`;
+  } else if (!w.gallery) {
+    linksEl.innerHTML += `<span class="modal-link disabled">✕ Демо недоступно</span>`;
+  }
+  if (w.source) {
+    linksEl.innerHTML += `<a class="modal-link" href="${w.source}" target="_blank">⌥ ИСХОДНИКИ</a>`;
+  }
+
+  // Gallery
+  const galleryEl = document.getElementById('m-gallery');
+  if (w.gallery && w.gallery.length) {
+    galleryEl.style.display = 'block';
+    galleryEl.innerHTML = w.gallery.map(src =>
+      `<img src="${src}" alt="" style="width:100%;display:block;margin-bottom:10px;border:1px solid var(--border);cursor:pointer;" onclick="window.open('${src}','_blank')" title="Открыть в полном размере">`
+    ).join('');
+  } else {
+    galleryEl.style.display = 'none';
+    galleryEl.innerHTML = '';
+  }
+
+  updateModalVote(id);
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  currentModalId = null;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── TABS ──
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && tab === 'works') || (i === 1 && tab === 'authors'));
+  });
+  document.getElementById('page-works').style.display   = tab === 'works'   ? 'block' : 'none';
+  document.getElementById('page-authors').style.display = tab === 'authors' ? 'block' : 'none';
+  if (tab === 'authors') renderAuthors();
+}
+
+// ── AUTHORS ──
+function getAuthorInitial(name) {
+  return name.trim()[0].toUpperCase();
+}
+
+function getAuthorWorks(author) {
+  return WORKS.filter(w => w.author === author);
+}
+
+function renderAuthors() {
+  showAuthorsList();
+  const grid = document.getElementById('authors-grid');
+  const authors = [...new Set(WORKS.map(w => w.author))];
+  grid.innerHTML = authors.map(author => {
+    const works = getAuthorWorks(author);
+    const pills = works.map(w =>
+      `<span class="author-pill">${w.icon} ${w.title}</span>`
+    ).join('');
+    const wordsLabel = works.length === 1 ? '1 работа' : works.length + ' работы';
+    return `
+      <div class="author-card" onclick="openAuthor('${author.replace(/'/g,"\\'")}')">
+        <div class="author-avatar">${getAuthorInitial(author)}</div>
+        <div class="author-name">${author}</div>
+        <div class="author-works-count">${wordsLabel}</div>
+        <div class="author-work-pills">${pills}</div>
+      </div>`;
+  }).join('');
+}
+
+function openAuthor(author) {
+  const works = getAuthorWorks(author);
+  document.getElementById('authors-list').style.display  = 'none';
+  document.getElementById('author-detail').style.display = 'block';
+  document.getElementById('ad-avatar').textContent = getAuthorInitial(author);
+  document.getElementById('ad-name').textContent   = author;
+  document.getElementById('ad-count').textContent  =
+    works.length === 1 ? '1 работа' : works.length + ' работы';
+
+  const grid = document.getElementById('author-works-grid');
+  grid.innerHTML = '';
+  works.forEach((w, idx) => {
+    const isVoted = !!votes[w.id];
+    const count   = voteCounts[w.id] || 0;
+    const previewHTML = w.image
+      ? `<div class="card-preview" style="padding:0;overflow:hidden;"><img src="${w.image}" alt="${w.title}" style="width:100%;height:100%;object-fit:cover;display:block;"></div>`
+      : `<div class="card-preview" style="font-size:56px">${w.icon}</div>`;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.animationDelay = (idx * 0.07) + 's';
+    card.innerHTML = `
+      <div class="card-number">${String(w.id).padStart(2,'0')}</div>
+      ${previewHTML}
+      <span class="card-tag tag-${w.category}">${tagLabels[w.category]}</span>
+      <div class="card-body">
+        <div class="card-title">${w.title}</div>
+        <div class="card-author">автор: <span>${w.author}</span></div>
+        <div class="card-desc">${w.desc}</div>
+        <div class="card-footer">
+          <button class="btn-view" onclick="openModal(${w.id})">→ Смотреть</button>
+          <div class="vote-area">
+            <button class="btn-vote ${isVoted ? 'voted' : ''}"
+              onclick="vote(${w.id})"
+              ${isVoted ? 'title="Вы уже проголосовали"' : 'title="Голосовать"'}
+            >♥</button>
+            <span class="vote-count" id="vc2-${w.id}">${count}</span>
+          </div>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function showAuthorsList() {
+  document.getElementById('authors-list').style.display  = 'block';
+  document.getElementById('author-detail').style.display = 'none';
+}
+
+// Filters
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderGrid();
+  });
+});
+
+document.getElementById('sort-select').addEventListener('change', e => {
+  currentSort = e.target.value;
+  renderGrid();
+});
+
+// Close modal on overlay click
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+
+// Init
+renderStats();
+renderGrid();
+</script>
+</body>
+</html>
