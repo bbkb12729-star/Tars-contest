@@ -991,7 +991,9 @@ const WORKS = [
     icon: "📎",
     desc: "Chrome-расширение вдохновлённое легендарной скрепкой из MS Office — но теперь с настоящим AI (Claude от Anthropic). Умеет: чат с AI, саммари страницы, перевод, проверка текста, простое объяснение темы. Требует API-ключ Claude — платишь не Ефиму, а Anthropic 😄",
     link: null,
-    source: null,
+    source: "https://github.com/bbkb12729-star/Tars-contest/blob/main/README.md",
+    readme: "https://github.com/bbkb12729-star/Tars-contest/blob/main/README.md",
+    download: "https://github.com/bbkb12729-star/Tars-contest/blob/main/extension-v73.zip.txt",
   },
 ];
 
@@ -1126,10 +1128,15 @@ function openModal(id) {
   linksEl.innerHTML = '';
   if (w.link) {
     linksEl.innerHTML += `<a class="modal-link" href="${w.link}" target="_blank">↗ ОТКРЫТЬ ДЕМО</a>`;
-  } else if (!w.gallery) {
+  } else if (!w.gallery && !w.readme && !w.download) {
     linksEl.innerHTML += `<span class="modal-link disabled">✕ Демо недоступно</span>`;
   }
-  if (w.source) {
+  if (w.readme) {
+    linksEl.innerHTML += `<a class="modal-link" href="${w.readme}" target="_blank">📄 README</a>`;
+  }
+  if (w.download) {
+    linksEl.innerHTML += `<a class="modal-link" href="${w.download}" target="_blank">⬇ СКАЧАТЬ ZIP</a>`;
+  } else if (w.source) {
     linksEl.innerHTML += `<a class="modal-link" href="${w.source}" target="_blank">⌥ ИСХОДНИКИ</a>`;
   }
 
