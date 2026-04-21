@@ -760,6 +760,43 @@
     letter-spacing: 2px;
   }
 
+  /* ── MUSIC BUTTON ── */
+  #music-btn {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 300;
+    width: 46px;
+    height: 46px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  #music-btn:hover {
+    border-color: var(--accent3);
+    color: var(--accent3);
+    box-shadow: 0 4px 20px rgba(62,207,207,0.2);
+  }
+
+  #music-btn.playing {
+    border-color: var(--accent3);
+    color: var(--accent3);
+    animation: music-pulse 2s infinite;
+  }
+
+  @keyframes music-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(62,207,207,0.3); }
+    50%       { box-shadow: 0 0 0 8px rgba(62,207,207,0); }
+  }
+
   /* ── TOAST ── */
   #toast {
     position: fixed;
@@ -795,10 +832,17 @@
 </head>
 <body>
 
+<audio id="bg-music" src="tars.mp3" loop preload="auto"></audio>
+
+<!-- Music toggle button -->
+<button id="music-btn" onclick="toggleMusic()" title="Музыка вкл/выкл">
+  <span id="music-icon">🎵</span>
+</button>
+
 <header>
   <div class="badge">✦ TARS Community</div>
   <h1>AI CONTEST</h1>
-  <p class="subtitle">РАБОТЫ УЧАСТНИКОВ · ГОЛОСОВАНИЕ · 2026</p>
+  <p class="subtitle">РАБОТЫ УЧАСТНИКОВ · ГОЛОСОВАНИЕ · 2025</p>
   <div class="stats-bar">
     <div class="stat">
       <span class="stat-number" id="stat-works">0</span>
@@ -1275,6 +1319,46 @@ document.getElementById('sort-select').addEventListener('change', e => {
 document.getElementById('modal-overlay').addEventListener('click', e => {
   if (e.target === document.getElementById('modal-overlay')) closeModal();
 });
+
+// ── MUSIC ──
+const music = document.getElementById('bg-music');
+const musicBtn = document.getElementById('music-btn');
+const musicIcon = document.getElementById('music-icon');
+let musicPlaying = false;
+
+music.volume = 0.35;
+
+function toggleMusic() {
+  if (musicPlaying) {
+    music.pause();
+    musicPlaying = false;
+    musicIcon.textContent = '🎵';
+    musicBtn.classList.remove('playing');
+  } else {
+    music.play().then(() => {
+      musicPlaying = true;
+      musicIcon.textContent = '🔊';
+      musicBtn.classList.add('playing');
+    }).catch(() => {
+      showToast('Нажми ещё раз для запуска музыки');
+    });
+  }
+}
+
+// Autoplay on first interaction
+function autoplayOnce() {
+  if (!musicPlaying) {
+    music.play().then(() => {
+      musicPlaying = true;
+      musicIcon.textContent = '🔊';
+      musicBtn.classList.add('playing');
+    }).catch(() => {});
+  }
+  document.removeEventListener('click', autoplayOnce);
+  document.removeEventListener('keydown', autoplayOnce);
+}
+document.addEventListener('click', autoplayOnce);
+document.addEventListener('keydown', autoplayOnce);
 
 // Init
 document.addEventListener('DOMContentLoaded', () => {
