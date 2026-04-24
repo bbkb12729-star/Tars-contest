@@ -760,6 +760,148 @@
     letter-spacing: 2px;
   }
 
+  /* ── REVIEW PAGE ── */
+  .review-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px;
+  }
+
+  .review-intro {
+    background: var(--card);
+    border: 1px solid var(--accent);
+    padding: 28px 32px;
+    margin-bottom: 40px;
+    position: relative;
+  }
+
+  .review-badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent3);
+    border: 1px solid var(--accent3);
+    padding: 4px 12px;
+    margin-bottom: 14px;
+  }
+
+  .review-intro-text {
+    font-size: 13px;
+    line-height: 1.8;
+    color: #b0b0d0;
+  }
+
+  .review-intro-text span {
+    color: var(--accent3);
+  }
+
+  .review-category-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    padding: 8px 0 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+
+  .review-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .review-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+  }
+
+  .review-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .review-card-special {
+    border-color: rgba(240,192,64,0.4);
+  }
+
+  .review-card-special:hover {
+    border-color: #f0c040;
+  }
+
+  .review-card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .review-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .review-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 3px;
+  }
+
+  .review-author {
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--accent3);
+  }
+
+  .review-stars {
+    margin-left: auto;
+    font-size: 18px;
+    color: #f0c040;
+    flex-shrink: 0;
+    letter-spacing: 2px;
+  }
+
+  .review-text {
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .review-special-badge {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #f0c040;
+    border: 1px solid rgba(240,192,64,0.4);
+    padding: 3px 10px;
+  }
+
+  .review-disclaimer {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    padding: 32px 0 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 600px) {
+    .review-page { padding: 24px 16px; }
+    .review-grid { grid-template-columns: 1fr; }
+  }
+
   /* ── MUSIC BUTTON ── */
   #music-btn {
     position: fixed;
@@ -858,7 +1000,7 @@
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('works')">✦ Работы</button>
   <button class="tab-btn" onclick="switchTab('authors')">◈ Авторы</button>
-  <button class="tab-btn" onclick="switchTab('review')">🤖 Оценка от ИИ</button>
+  <button class="tab-btn" onclick="switchTab('review')">🤖 Вердикт ИИ</button>
 </div>
 
 <!-- PAGE: WORKS -->
@@ -899,6 +1041,149 @@
       <button class="btn-back" onclick="showAuthorsList()">← Все авторы</button>
     </div>
     <div class="grid" id="author-works-grid"></div>
+  </div>
+</div>
+
+<!-- PAGE: AI REVIEW -->
+<div id="page-review" style="display:none;">
+  <div class="review-page">
+    <div class="review-intro">
+      <div class="review-badge">🤖 Claude AI</div>
+      <p class="review-intro-text">Я ознайомився з усіма роботами — відвідав посилання, подивився картинки — і склав свою чесну оцінку за трьома критеріями: <span>оригінальність ідеї</span>, <span>глибина реалізації</span> та <span>завершеність</span>. Від 1 до 3 зірок.</p>
+    </div>
+
+    <div class="review-category-title">🎮 Ігри</div>
+    <div class="review-grid">
+
+      <div class="review-card">
+        <div class="review-card-top">
+          <span class="review-icon">🔍</span>
+          <div>
+            <div class="review-title">GIT BLAME</div>
+            <div class="review-author">Aramais</div>
+          </div>
+          <div class="review-stars">★★★</div>
+        </div>
+        <p class="review-text">Детективна гра про свою команду, до 5-річчя — це рівень. Своя історія, персонажі, бонусна міні-гра. Видно що вкладено багато часу та гумору.</p>
+      </div>
+
+      <div class="review-card">
+        <div class="review-card-top">
+          <span class="review-icon">🐔</span>
+          <div>
+            <div class="review-title">TARS Farm — Chicken Brainrot</div>
+            <div class="review-author">Женя</div>
+          </div>
+          <div class="review-stars">★★★</div>
+        </div>
+        <p class="review-text">Несподівано глибока гра: механіки мутацій, зомбі, CHAOS-лічильник, debug-режим, прихований екран, кастомні звуки. Значно більше ніж виглядає зовні.</p>
+      </div>
+
+      <div class="review-card">
+        <div class="review-card-top">
+          <span class="review-icon">🌙</span>
+          <div>
+            <div class="review-title">Late Night Scroll</div>
+            <div class="review-author">Inessa</div>
+          </div>
+          <div class="review-stars">★★★</div>
+        </div>
+        <p class="review-text">Цілісна концепція, атмосфера, lo-fi естетика, механіка статів. Все на своєму місці, нічого зайвого.</p>
+      </div>
+
+      <div class="review-card">
+        <div class="review-card-top">
+          <span class="review-icon">🚀</span>
+          <div>
+            <div class="review-title">Space Run</div>
+            <div class="review-author">Taras</div>
+          </div>
+          <div class="review-stars">★★</div>
+        </div>
+        <p class="review-text">Робочий раннер, приємний геймплей. Добротно, але без особливих родзинок.</p>
+      </div>
+
+      <div class="review-card review-card-special">
+        <div class="review-card-top">
+          <span class="review-icon">🐱</span>
+          <div>
+            <div class="review-title">Котик-Бегун: Погоня за Мемами</div>
+            <div class="review-author">Мишка (сын Taras'а)</div>
+          </div>
+          <div class="review-stars">★★★</div>
+        </div>
+        <p class="review-text">Особлива номінація — проект юного розробника заслуговує трьох зірок просто за те що існує. 🌟</p>
+        <div class="review-special-badge">Особливий учасник</div>
+      </div>
+
+    </div>
+
+    <div class="review-category-title">🖥️ Інструменти</div>
+    <div class="review-grid">
+
+      <div class="review-card">
+        <div class="review-card-top">
+          <span class="review-icon">📎</span>
+          <div>
+            <div class="review-title">Клипси — AI-помощник для Chrome</div>
+            <div class="review-author">Ефим</div>
+          </div>
+          <div class="review-stars">★★★</div>
+        </div>
+        <p class="review-text">Єдиний практичний інструмент у конкурсі. Реальний продукт який можна встановити і використовувати щодня — це окремий рівень складності.</p>
+      </div>
+
+    </div>
+
+    <div class="review-category-title">🎨 Арт / Генерація</div>
+    <div class="review-grid">
+
+      <div class="review-card">
+        <div class="review-card-top">
+          <span class="review-icon">🎨</span>
+          <div>
+            <div class="review-title">Тишина, рассказанная по-разному</div>
+            <div class="review-author">Ann</div>
+          </div>
+          <div class="review-stars">★★★</div>
+        </div>
+        <p class="review-text">Найпродуманіша концепція в арт-категорії. Оригінал від руки + 8 AI-інтерпретацій з поясненням кожного стилю — це дослідження, а не просто картинка.</p>
+      </div>
+
+      <div class="review-card">
+        <div class="review-card-top">
+          <span class="review-icon">🍗</span>
+          <div>
+            <div class="review-title">Chicken Banquet</div>
+            <div class="review-author">playguitares</div>
+          </div>
+          <div class="review-stars">★★</div>
+        </div>
+        <p class="review-text">Смішно, абсурдно, зроблено зі смаком. Але це одна картинка — за трудовитратами об'єктивно менше ніж інші роботи.</p>
+      </div>
+
+    </div>
+
+    <div class="review-category-title">🌌 Застосунки</div>
+    <div class="review-grid">
+
+      <div class="review-card">
+        <div class="review-card-top">
+          <span class="review-icon">🪐</span>
+          <div>
+            <div class="review-title">Solar Gravity</div>
+            <div class="review-author">Taras</div>
+          </div>
+          <div class="review-stars">★★★</div>
+        </div>
+        <p class="review-text">Фізична симуляція з тачскрін-гравітацією — технічно найцікавіша «іграшка» у конкурсі. Працює як медитація.</p>
+      </div>
+
+    </div>
+
+    <div class="review-disclaimer">
+      Це суб'єктивна оцінка штучного інтелекту. Фінальне слово — за чатом TARS! 🎉
+    </div>
   </div>
 </div>
 
@@ -1233,11 +1518,16 @@ function showToast(msg) {
 
 // ── TABS ──
 function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach((b, i) => {
-    b.classList.toggle('active', (i === 0 && tab === 'works') || (i === 1 && tab === 'authors'));
+  document.querySelectorAll('.tabs .tab-btn').forEach((b, i) => {
+    b.classList.toggle('active',
+      (i === 0 && tab === 'works') ||
+      (i === 1 && tab === 'authors') ||
+      (i === 2 && tab === 'review')
+    );
   });
   document.getElementById('page-works').style.display   = tab === 'works'   ? 'block' : 'none';
   document.getElementById('page-authors').style.display = tab === 'authors' ? 'block' : 'none';
+  document.getElementById('page-review').style.display  = tab === 'review'  ? 'block' : 'none';
   if (tab === 'authors') renderAuthors();
 }
 
